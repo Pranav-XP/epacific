@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import * as z from "zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { ImageIcon, Pencil, PlusCircle } from "lucide-react";
