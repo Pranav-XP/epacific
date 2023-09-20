@@ -89,7 +89,7 @@ const CreatePage = () => {
                   </Button>
                 </Link>
                 <Button
-                  className="bg-sky-600"
+                  className="hover:bg-sky-500 bg-sky-600"
                   type="submit"
                   disabled={!isValid || isSubmitting}
                 >
