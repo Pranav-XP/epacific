@@ -25,6 +25,12 @@ const CourseIDPage = async ({ params }: { params: { courseId: string } }) => {
     redirect("/");
   }
 
+  const categories = await db.category.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
+
   const requiredFields = [
     course.title,
     course.description,
