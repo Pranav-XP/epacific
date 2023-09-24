@@ -16,14 +16,14 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pencil, PlusCircle } from "lucide-react";
+import { Loader2, Pencil, PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
-import { Course } from "@prisma/client";
+import { Chapter, Course } from "@prisma/client";
+import { ChaptersList } from "./ChaptersList";
 
 interface ChapterFormProps {
-  initialData: Course;
+  initialData: Course & { chapters: Chapter[] };
   courseId: string;
 }
 
@@ -62,8 +62,27 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
     }
   };
 
+  const onReorder = async (updateData: { id: string; position: number }[]) => {
+    try {
+      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+        list: updateData,
+      });
+      toast.success("Chapters reordered");
+      router.refresh();
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
-    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+    <div className="mt-6 border bg-slate-100 rounded-md p-4 relative">
+      {isUpdating && (
+        <div className="absolute h-full w-full bg-slate-500/20 top-0 right-0 rounded-m flex items-center justify-center">
+          <Loader2 className="animate-spin h-6 w-6 text-sky-700" />
+        </div>
+      )}
       <div className="font-medium flex items-center justify-between">
         Course Chapters
         <Button onClick={toggleCreate} variant={"ghost"}>
@@ -76,16 +95,6 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
           )}
         </Button>
       </div>
-      {!isCreating && (
-        <p
-          className={cn(
-            "text-sm mt-2",
-            !initialData.description && "text-slate-500 italic"
-          )}
-        >
-          {initialData.description || "Add description"}
-        </p>
-      )}
       {isCreating && (
         <Form {...form}>
           <form
@@ -98,9 +107,9 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea
+                    <Input
                       disabled={isSubmitting}
-                      placeholder="e.g. 'This course is about...'"
+                      placeholder="e.g. 'Introduction to the Course'"
                       {...field}
                     />
                   </FormControl>
@@ -108,13 +117,32 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
                 </FormItem>
               )}
             />
-            <div className="flex items-center gap-x-2">
-              <Button disabled={!isValid || isSubmitting} type="submit">
-                Save
-              </Button>
-            </div>
+
+            <Button disabled={!isValid || isSubmitting} type="submit">
+              Create
+            </Button>
           </form>
         </Form>
+      )}
+      {!isCreating && (
+        <div
+          className={cn(
+            "text-sm mt-2",
+            !initialData.chapters.length && "text-slate-500 italic"
+          )}
+        >
+          {!initialData.chapters.length && "No chapters"}
+          <ChaptersList
+            onEdit={() => {}}
+            onReorder={onReorder}
+            items={initialData.chapters || []}
+          />
+        </div>
+      )}
+      {!isCreating && (
+        <p className="text-xs text-muted-foreground mt-4">
+          Drag and drop to reorder chapters.
+        </p>
       )}
     </div>
   );
