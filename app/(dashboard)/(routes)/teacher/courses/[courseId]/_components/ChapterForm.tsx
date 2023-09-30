@@ -62,8 +62,13 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
     }
   };
 
+  const onEdit = (id: string) => {
+    router.push(`/teacher/courses/${courseId}/chapters/${id}`);
+  };
+
   const onReorder = async (updateData: { id: string; position: number }[]) => {
     try {
+      setIsUpdating(true);
       await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
         list: updateData,
       });
@@ -133,7 +138,7 @@ const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
         >
           {!initialData.chapters.length && "No chapters"}
           <ChaptersList
-            onEdit={() => {}}
+            onEdit={onEdit}
             onReorder={onReorder}
             items={initialData.chapters || []}
           />
