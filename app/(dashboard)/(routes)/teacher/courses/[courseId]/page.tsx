@@ -17,6 +17,7 @@ import PriceForm from "./_components/PriceForm";
 import AttachmentForm from "./_components/AttachmentForm";
 import ChapterForm from "./_components/ChapterForm";
 import { Banner } from "@/components/banner";
+import { Actions } from "./_components/actions";
 
 const CourseIDPage = async ({ params }: { params: { courseId: string } }) => {
   const { userId } = auth();
@@ -83,7 +84,11 @@ const CourseIDPage = async ({ params }: { params: { courseId: string } }) => {
               Complete all fields {completionText}
             </span>
           </div>
-          {/* ADD ACTIONS */}
+          <Actions
+            disabled={!isComplete}
+            courseId={params.courseId}
+            isPublished={course.isPublished}
+          />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
           <div>
