@@ -132,6 +132,7 @@ export async function PATCH(
       });
 
       if (existingMuxData) {
+        console.log("Fetching existing Mux Data");
         await Video.Assets.del(existingMuxData.assetId);
         await db.muxData.delete({
           where: {
@@ -146,6 +147,7 @@ export async function PATCH(
         test: false,
       });
 
+      console.log("Creating existing Mux Data");
       await db.muxData.create({
         data: {
           chapterId: params.chapterId,
